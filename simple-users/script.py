@@ -41,7 +41,6 @@ commands.add_command(info)
 commands.add_command(clear_db)
 commands.add_command(load_persons)
 commands.add_command(list_persons)
-commands.add_command(list_persons)
 
 if __name__ == '__main__':
     commands()
