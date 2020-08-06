@@ -35,7 +35,9 @@ def load_persons(count):
 def list_persons(count):
     print("Raading persons")
     try:
-        print(ps.get_persons(count))
+        persons = ps.get_persons(count)
+        for p in persons:
+            print(p.name_first, p.name_last, p.gender, p.dob_age)
     except OperationalError:
         print('Database is empty please download some persons first')
 
@@ -76,6 +78,18 @@ def most_common_passwords(n):
         results = ps.most_common('passwords', n)
         for r in results:
             print("{}, {}".format(r.pswd, r.occur))
+    except OperationalError:
+        print('Database is empty please download some persons first')
+
+
+@commands.command(name='born', help="List persons born between given dates")
+@click.argument('date_from', type=click.DateTime(formats=["%Y-%m-%d"]))
+@click.argument('date_to', type=click.DateTime(formats=["%Y-%m-%d"]))
+def get_persons_born(date_from, date_to):
+    try:
+        persons = ps.born_between(date_from, date_to)
+        for p in persons:
+            print("{} {}, born: {}".format(p.name_first, p.name_last, p.dob_date))
     except OperationalError:
         print('Database is empty please download some persons first')
 
