@@ -20,7 +20,13 @@ class Person(BaseModel):
     location_coordinates = TextField()
     location_timezone = TextField()
     email = TextField()
-    login = TextField()
+    login_uuid = TextField()
+    login_username = TextField()
+    login_password = TextField()
+    login_salt = TextField()
+    login_md5 = TextField()
+    login_sha1 = TextField()
+    login_sha256 = TextField()
     dob_date = DateTimeField()
     dob_age = SmallIntegerField()
     registered_date = DateTimeField()
@@ -30,3 +36,9 @@ class Person(BaseModel):
     id_name = TextField()
     id_value = TextField(null=True)
     next_birthday = SmallIntegerField(null=True)
+
+
+class PersonUnion(BaseModel):
+    login_uuid = TextField()
+    login_password = TextField()
+    val = TextField()
