@@ -1,10 +1,12 @@
 from datetime import datetime
 
+from models import Person
+
 
 class PersonFactory:
     def create_from_json(self, json):
         self._adjust(json)
-        return json(
+        return Person(
             gender=json['gender'],
             name_title=json['name']['title'],
             name_first=json['name']['first'],

@@ -36,3 +36,9 @@ class Person(BaseModel):
     id_name = TextField()
     id_value = TextField(null=True)
     next_birthday = SmallIntegerField(null=True)
+
+
+class PersonUnion(BaseModel):
+    login_uuid = TextField()
+    login_password = TextField()
+    val = TextField()

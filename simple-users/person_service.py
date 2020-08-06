@@ -3,7 +3,7 @@ import json
 import requests
 from peewee import fn, SQL
 
-from models import Person
+from models import Person, PersonUnion
 from person_factory import PersonFactory
 
 
@@ -60,3 +60,35 @@ class PersonService:
             p = pf.create_from_json(p)
             p.save()
         print('Done, downloaded {} new persons'.format(len(persons)))
+
+    def get_safest_pswd(self):
+        query_upper_letter = self.prepare_sf_subquery('p1', '2', '*[A-Z]*')
+        query_lower_letter = self.prepare_sf_subquery('p2', '1', '*[a-z]*')
+        query_number = self.prepare_sf_subquery('p3', '1', '*[0-9]*')
+        query_length_min8 = self.prepare_sf_subquery('p4', '5', '????????*')
+
+        # TODO add symbol check
+
+        query_union = query_upper_letter + query_lower_letter + query_number + query_length_min8
+
+        PersonUnion.create_table()
+        PersonUnion\
+            .insert_from(query_union, [PersonUnion.val, PersonUnion.login_password, PersonUnion.login_uuid])\
+            .execute()
+
+        res = PersonUnion \
+            .select(fn.sum(PersonUnion.val).alias('sum_val'),
+                    PersonUnion.login_password.alias('pswd'),
+                    PersonUnion.login_uuid) \
+            .group_by(PersonUnion.login_uuid) \
+            .order_by(SQL('sum_val').desc()) \
+            .peek()
+
+        PersonUnion.drop_table()
+
+        return res
+
+    def prepare_sf_subquery(self, alias, val, pattern):
+        p = Person.alias(alias)
+        return p.select(SQL(val).alias('val'), p.login_password, p.login_uuid) \
+            .where(p.login_password % pattern)

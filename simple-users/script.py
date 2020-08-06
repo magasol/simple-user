@@ -94,5 +94,14 @@ def get_persons_born(date_from, date_to):
         print('Database is empty please download some persons first')
 
 
+@commands.command(name='safest-password', help="Show safest password")
+def safest_password():
+    try:
+        res = ps.get_safest_pswd()
+        print(res.pswd, res.sum_val)
+    except OperationalError:
+        print('Database is empty please download some persons first')
+
+
 if __name__ == '__main__':
     commands()
