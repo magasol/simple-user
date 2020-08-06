@@ -62,18 +62,18 @@ class PersonService:
         print('Done, downloaded {} new persons'.format(len(persons)))
 
     def get_safest_pswd(self):
-        query_upper_letter = self.prepare_sf_subquery('p1', '2', '*[A-Z]*')
-        query_lower_letter = self.prepare_sf_subquery('p2', '1', '*[a-z]*')
-        query_number = self.prepare_sf_subquery('p3', '1', '*[0-9]*')
-        query_length_min8 = self.prepare_sf_subquery('p4', '5', '????????*')
+        query_upper_letter = self.prepare_sp_subquery('2', '*[A-Z]*')
+        query_lower_letter = self.prepare_sp_subquery('1', '*[a-z]*')
+        query_number = self.prepare_sp_subquery('1', '*[0-9]*')
+        query_length_min8 = self.prepare_sp_subquery('5', '????????*')
+        query_symbol = self.prepare_sp_subquery('3', '*[!@#$%^&*()_-+=,<.>/?;:\'\"\\|[]{}~`]*')
 
-        # TODO add symbol check
-
-        query_union = query_upper_letter + query_lower_letter + query_number + query_length_min8
+        query_union = query_upper_letter + query_lower_letter + query_number \
+                      + query_length_min8 + query_symbol
 
         PersonUnion.create_table()
-        PersonUnion\
-            .insert_from(query_union, [PersonUnion.val, PersonUnion.login_password, PersonUnion.login_uuid])\
+        PersonUnion \
+            .insert_from(query_union, [PersonUnion.val, PersonUnion.login_password, PersonUnion.login_uuid]) \
             .execute()
 
         res = PersonUnion \
@@ -88,7 +88,6 @@ class PersonService:
 
         return res
 
-    def prepare_sf_subquery(self, alias, val, pattern):
-        p = Person.alias(alias)
-        return p.select(SQL(val).alias('val'), p.login_password, p.login_uuid) \
-            .where(p.login_password % pattern)
+    def prepare_sp_subquery(self, val, pattern):
+        return Person.select(SQL(val).alias('val'), Person.login_password, Person.login_uuid) \
+            .where(Person.login_password % pattern)

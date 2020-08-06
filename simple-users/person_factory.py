@@ -38,7 +38,7 @@ class PersonFactory:
 
     def _adjust(self, person):
         person.pop('picture')
-        symbols = '!@#$%^&*()_-+={[}]:;\'\'<,>.?/\\| '
+        symbols = '!@#$%^&*()_-+=,<.>/?;:\'\"\\|[]{}~` '
         person['cell'] = person['cell'].translate({ord(i): None for i in symbols})
         person['phone'] = person['phone'].translate({ord(i): None for i in symbols})
         try:
