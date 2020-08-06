@@ -16,7 +16,7 @@ def info():
     click.echo("A program about randomly generated persons data")
 
 
-@commands.command(name='clear', help="Clear entire database")
+@commands.command(name='clear', help="Remove persons from database")
 def clear_db():
     print("Clearing db")
     ps.drop_persons()
