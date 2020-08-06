@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 
 import requests
-from peewee import OperationalError
+from peewee import OperationalError, fn
 
 from models import Person
 
@@ -22,6 +22,12 @@ class PersonService:
             return [person.name_first + ' ' + person.name_last for person in query]
         except OperationalError:
             print('Database is empty please download some persons first')
+
+    def get_gender_percentage(self, gender):
+        gender_query = Person.select(fn.COUNT(Person.gender).alias('count')).where(Person.gender == gender).get()
+        persons_query = Person.select(fn.COUNT(Person.gender).alias('count')).get()
+        gender_percentage = gender_query.count / persons_query.count * 100
+        return gender_percentage
 
     def insert_persons(self, persons):
         print('Inserting persons into db')
