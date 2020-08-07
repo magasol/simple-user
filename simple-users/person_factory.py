@@ -4,8 +4,12 @@ from models import Person
 
 
 class PersonFactory:
+    def __init__(self):
+        self.json = None
+
     def create_from_json(self, json):
-        self._adjust(json)
+        self.json = json
+        self._adjust()
         return Person(
             gender=json['gender'],
             name_title=json['name']['title'],
@@ -36,13 +40,14 @@ class PersonFactory:
             next_birthday=json['next_birthday']
         )
 
-    def _adjust(self, person):
-        person.pop('picture')
+    def _adjust(self):
+        self.json.pop('picture')
         symbols = '!@#$%^&*()_-+=,<.>/?;:\'\"\\|[]{}~` '
-        person['cell'] = person['cell'].translate({ord(i): None for i in symbols})
-        person['phone'] = person['phone'].translate({ord(i): None for i in symbols})
+        self.json['cell'] = self.json['cell'].translate({ord(i): None for i in symbols})
+        self.json['phone'] = self.json['phone'].translate({ord(i): None for i in symbols})
         try:
-            person['next_birthday'] = (datetime.strptime(person['dob']['date'], '%Y-%m-%dT%H:%M:%S.%fZ').replace(
-                year=datetime.now().year + 1) - datetime.now()).days
+            self.json['next_birthday'] = (
+                        datetime.strptime(self.json['dob']['date'], '%Y-%m-%dT%H:%M:%S.%fZ').replace(
+                            year=datetime.now().year + 1) - datetime.now()).days
         except ValueError:
-            person['next_birthday'] = None
+            self.json['next_birthday'] = None

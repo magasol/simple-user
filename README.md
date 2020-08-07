@@ -1,7 +1,8 @@
 ﻿# simple-user
 Required: \
-'Click', 'Requires' \
- \
+- 'Click', 'Requests' \
+- Internet Connection \
+
 Commands: \
 __average-age [x]__ -> Count average age of men or women or general [ female | male | all ] all is defult value \
 __born [x] [y]__ -> List persons born between given dates: from -> x and to -> y in format '%Y-%m-%d' \
