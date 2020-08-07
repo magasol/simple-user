@@ -1,4 +1,5 @@
 import json
+import random
 
 import requests
 from peewee import fn, SQL
@@ -11,7 +12,9 @@ class PersonService:
 
     @staticmethod
     def load_persons(count):
-        response = requests.get('https://randomuser.me/api/?results={}'.format(count))
+        extras = PersonService._rand_pwd_extras()
+        response = requests.get('https://randomuser.me/api/?results={}&password={}3-15'
+                                .format(count, extras))
         return json.loads(response.text)['results']
 
     @staticmethod
@@ -73,7 +76,7 @@ class PersonService:
         query_lower_letter = PersonService._prepare_sp_subquery('1', '*[a-z]*')
         query_number = PersonService._prepare_sp_subquery('1', '*[0-9]*')
         query_length_min8 = PersonService._prepare_sp_subquery('5', '????????*')
-        query_symbol = PersonService._prepare_sp_subquery('3', '*[!@#$%^&*()_-+=,<.>/?;:\'\"\\|[]{}~`]*')
+        query_symbol = PersonService._prepare_sp_subquery('3', '*[!"#$%&\'()*+,- ./:;<=>?@\^_`{|}~[\]*')
 
         query_union = query_upper_letter + query_lower_letter + query_number \
                       + query_length_min8 + query_symbol
@@ -81,6 +84,21 @@ class PersonService:
         res = PersonService._use_tmp_personunion(query_union)
 
         return res
+
+    @staticmethod
+    def _rand_pwd_extras():
+        extras = ''
+        for item in ['special,', 'upper,', 'lower,', 'number,']:
+            extras += PersonService._rand_add_extra(item)
+        return extras
+
+    @staticmethod
+    def _rand_add_extra(item):
+        r = random.randint(0, 4)
+        if r % 4 == 0:
+            return item
+        else:
+            return ''
 
     @staticmethod
     def _prepare_sp_subquery(val, pattern):
