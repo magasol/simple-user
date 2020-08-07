@@ -1,9 +1,8 @@
 import click
+import requests
 from peewee import OperationalError
 
 from person_service import PersonService
-
-ps = PersonService()
 
 
 @click.group()
@@ -19,15 +18,19 @@ def info():
 @commands.command(name='clear', help="Remove persons from database")
 def clear_db():
     print("Clearing db")
-    ps.drop_persons()
+    PersonService.drop_persons()
 
 
 @commands.command(name='load', help="Load persons into database")
 @click.argument('count', type=int, default=20)
 def load_persons(count):
     print("Downloading")
-    persons = ps.load_persons(count)
-    ps.insert_persons(persons)
+    try:
+        persons = PersonService.load_persons(count)
+    except requests.exceptions.ConnectionError:
+        print("Could not download due to connection error.")
+    else:
+        PersonService.insert_persons(persons)
 
 
 @commands.command(name='list', help="List persons")
@@ -35,7 +38,7 @@ def load_persons(count):
 def list_persons(count):
     print("Raading persons")
     try:
-        persons = ps.get_persons(count)
+        persons = PersonService.get_persons(count)
         for p in persons:
             print(p.name_first, p.name_last, p.gender, p.dob_age)
     except OperationalError:
@@ -46,7 +49,7 @@ def list_persons(count):
 @click.argument('gender', type=click.Choice(['male', 'female']))
 def gender_percentage(gender):
     try:
-        print("{}: {}%".format(gender, ps.get_gender_percentage(gender)))
+        print("{}: {}%".format(gender, PersonService.get_gender_percentage(gender)))
     except OperationalError:
         print('Database is empty please download some persons first')
 
@@ -55,7 +58,7 @@ def gender_percentage(gender):
 @click.argument('gender', default='all', type=click.Choice(['male', 'female', 'all']))
 def gender_avg_age(gender):
     try:
-        print("{}: {}".format(gender, ps.get_avg_age(gender)))
+        print("{}: {}".format(gender, PersonService.get_avg_age(gender)))
     except OperationalError:
         print('Database is empty please download some persons first')
 
@@ -64,9 +67,9 @@ def gender_avg_age(gender):
 @click.argument('n', default='1', type=int)
 def most_common_cities(n):
     try:
-        results = ps.most_common('cities', n)
+        results = PersonService.most_common('cities', n)
         for r in results:
-            print("{}, {}".format(r.city_name, r.occur))
+            print("{}, {}".format(r.location_city, r.occur))
     except OperationalError:
         print('Database is empty please download some persons first')
 
@@ -75,9 +78,9 @@ def most_common_cities(n):
 @click.argument('n', default='1', type=int)
 def most_common_passwords(n):
     try:
-        results = ps.most_common('passwords', n)
+        results = PersonService.most_common('passwords', n)
         for r in results:
-            print("{}, {}".format(r.pswd, r.occur))
+            print("{}, {}".format(r.login_password, r.occur))
     except OperationalError:
         print('Database is empty please download some persons first')
 
@@ -87,7 +90,7 @@ def most_common_passwords(n):
 @click.argument('date_to', type=click.DateTime(formats=["%Y-%m-%d"]))
 def get_persons_born(date_from, date_to):
     try:
-        persons = ps.born_between(date_from, date_to)
+        persons = PersonService.born_between(date_from, date_to)
         for p in persons:
             print("{} {}, born: {}".format(p.name_first, p.name_last, p.dob_date))
     except OperationalError:
@@ -97,8 +100,8 @@ def get_persons_born(date_from, date_to):
 @commands.command(name='safest-password', help="Show safest password")
 def safest_password():
     try:
-        res = ps.get_safest_pswd()
-        print(res.pswd, res.sum_val)
+        res = PersonService.get_safest_pswd()
+        print(res.login_password, res.sum_val)
     except OperationalError:
         print('Database is empty please download some persons first')
 
