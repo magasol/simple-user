@@ -9,12 +9,14 @@ Before running the program installing required packages:
 ```
 python setup.py install
 ```
-Uninstalling packages
+Uninstalling packages run
 ```
-run__uninstall.cmd__
+uninstall.cmd
 ```
 Running the program:
+```
 python script.py [command]
+```
 Commands: \
 __average-age [x]__ -> Count average age of men or women or general [ female | male | all ] all is defult value \
 __born [x] [y]__ -> List persons born between given dates: from -> x and to -> y in format '%Y-%m-%d' \
