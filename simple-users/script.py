@@ -12,7 +12,7 @@ def commands():
 
 @commands.command(name='info', help="About program")
 def info():
-    click.echo("A program about randomly generated persons data")
+    print("A program about randomly generated persons data")
 
 
 @commands.command(name='clear', help="Remove persons from database")
@@ -30,13 +30,15 @@ def load_persons(count):
     except requests.exceptions.ConnectionError:
         print("Could not download due to connection error.")
     else:
+        print('Inserting persons into db')
         PersonService.insert_persons(persons)
+        print('Done, downloaded {} new persons'.format(len(persons)))
 
 
 @commands.command(name='list', help="List persons")
 @click.argument('count', type=int, default=10)
 def list_persons(count):
-    print("Raading persons")
+    print("Reading persons")
     try:
         persons = PersonService.get_persons(count)
         for p in persons:

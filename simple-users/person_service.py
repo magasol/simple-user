@@ -19,13 +19,11 @@ class PersonService:
 
     @staticmethod
     def insert_persons(persons):
-        print('Inserting persons into db')
         Person.create_table()
+        pf = PersonFactory()
         for p in persons:
-            pf = PersonFactory()
             p = pf.create_from_json(p)
             p.save()
-        print('Done, downloaded {} new persons'.format(len(persons)))
 
     @staticmethod
     def drop_persons():
