@@ -1,8 +1,20 @@
 ﻿# simple-user
-Required: \
-- 'Click', 'Requests' \
-- Internet Connection \
+Required: 
+- Internet Connection 
+- OS: Windows 
+- python3.8 https://www.python.org/downloads/release/python-380/ 
+- pip https://pip.pypa.io/en/stable/installing/
 
+Before running the program installing required packages:
+```
+python setup.py install
+```
+Uninstalling packages
+```
+run__uninstall.cmd__
+```
+Running the program:
+python script.py [command]
 Commands: \
 __average-age [x]__ -> Count average age of men or women or general [ female | male | all ] all is defult value \
 __born [x] [y]__ -> List persons born between given dates: from -> x and to -> y in format '%Y-%m-%d' \
