@@ -42,7 +42,7 @@ class PersonFactory:
 
     def _adjust(self):
         self.json.pop('picture')
-        symbols = '!@#$%^&*()_-+=,<.>/?;:\'\"\\|[]{}~` '
+        symbols = '!"#$%&\'()*+,- ./:;<=>?@\^_`{|}~[\]'
         self.json['cell'] = self.json['cell'].translate({ord(i): None for i in symbols})
         self.json['phone'] = self.json['phone'].translate({ord(i): None for i in symbols})
         try:
